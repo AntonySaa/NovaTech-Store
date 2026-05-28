@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="220" viewBox="0 0 1000 220" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#051437"/>
+      <stop offset="60%" stop-color="#0B2E72"/>
+      <stop offset="100%" stop-color="#061B46"/>
+    </linearGradient>
+    <linearGradient id="store" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#44CCFF"/>
+      <stop offset="100%" stop-color="#2A65FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1000" height="220" rx="18" fill="url(#bg)"/>
+  <text x="38" y="148" font-family="Outfit, Arial, sans-serif" font-size="118" font-weight="800" fill="#EFF6FF">
+    NovaTech
+  </text>
+  <text x="610" y="148" font-family="Outfit, Arial, sans-serif" font-size="118" font-weight="800" fill="url(#store)">
+    Store
+  </text>
+  <line x1="32" y1="188" x2="968" y2="188" stroke="#2D76FF" stroke-opacity="0.7" stroke-width="3"/>
+</svg>
