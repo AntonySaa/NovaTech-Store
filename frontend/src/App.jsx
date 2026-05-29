@@ -231,9 +231,9 @@ const PRODUCT_IMAGE_LIBRARY = {
     "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=1400&auto=format&fit=crop",
   ],
   monitor: [
-    "/featured/featured-06.png",
-    "/featured/featured-06.png",
-    "/featured/featured-06.png",
+    "/monitors/monitor-lg.png",
+    "/monitors/monitor-samsung.png",
+    "/monitors/monitor-msi-gaming.png",
   ],
   mouse: [
     "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=1400&auto=format&fit=crop",
@@ -267,6 +267,25 @@ const PRODUCT_IMAGE_LIBRARY = {
   ],
 };
 
+const MONITOR_IMAGE_BY_PRODUCT = [
+  {
+    match: "monitor 27 msi g274f",
+    image: "/monitors/monitor-msi-gaming.png",
+  },
+  {
+    match: "monitor 27 lg 27ms500-b",
+    image: "/monitors/monitor-lg.png",
+  },
+  {
+    match: "monitor 31.5 asus va329he",
+    image: "/monitors/monitor-asus.png",
+  },
+  {
+    match: "monitor 34 samsung ls34c500galxpe",
+    image: "/monitors/monitor-samsung.png",
+  },
+];
+
 function hashText(value) {
   return String(value || "")
     .split("")
@@ -284,6 +303,10 @@ function resolveProductImage(product, sectionKey = "") {
   const identity = product?.slug || product?.id || name;
 
   if (name.includes("monitor") || sectionKey === "monitores") {
+    const exactMonitor = MONITOR_IMAGE_BY_PRODUCT.find((entry) =>
+      name.includes(entry.match)
+    );
+    if (exactMonitor) return exactMonitor.image;
     return pickFromLibrary("monitor", identity);
   }
   if (name.includes("mouse") || sectionKey === "mouse") {
