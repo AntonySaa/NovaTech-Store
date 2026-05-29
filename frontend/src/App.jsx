@@ -216,6 +216,13 @@ const BASE_COUPONS = {
   NOVA20: 20,
   NOVA2026: 40,
 };
+const ROUTE_HASH = {
+  STORE: "#/",
+  ORDERS: "#/orders",
+  CHECKOUT_CART: "#/checkout/cart",
+  CHECKOUT_SHIPPING: "#/checkout/shipping",
+  CHECKOUT_PAYMENT: "#/checkout/payment",
+};
 
 const PRODUCT_IMAGE_LIBRARY = {
   laptop: [
@@ -324,6 +331,12 @@ function resolveProductImage(product, sectionKey = "") {
   );
 }
 
+function normalizeHash(hashValue) {
+  const raw = String(hashValue || "").trim();
+  if (!raw || raw === "#") return ROUTE_HASH.STORE;
+  return raw.startsWith("#") ? raw : `#${raw}`;
+}
+
 function App() {
   const googleButtonRef = useRef(null);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
@@ -359,6 +372,16 @@ function App() {
 
   const isAdmin = user?.role === "ADMIN";
   const hasGoogleClientId = Boolean(GOOGLE_CLIENT_ID);
+
+  const currentRouteHash = useMemo(() => {
+    if (checkoutOpen) {
+      if (checkoutStep === 2) return ROUTE_HASH.CHECKOUT_SHIPPING;
+      if (checkoutStep === 3) return ROUTE_HASH.CHECKOUT_PAYMENT;
+      return ROUTE_HASH.CHECKOUT_CART;
+    }
+    if (activeView === "orders") return ROUTE_HASH.ORDERS;
+    return ROUTE_HASH.STORE;
+  }, [checkoutOpen, checkoutStep, activeView]);
 
   const authHeaders = useMemo(() => {
     return token ? { Authorization: `Bearer ${token}` } : {};
@@ -490,6 +513,47 @@ function App() {
       setMessage(error.message)
     );
   }, [token, user, loadCart, loadOrders]);
+
+  useEffect(() => {
+    function applyRouteFromHash() {
+      const normalized = normalizeHash(window.location.hash);
+
+      if (normalized.startsWith("#/checkout/")) {
+        setActiveView("store");
+        setCheckoutOpen(true);
+        if (normalized === ROUTE_HASH.CHECKOUT_SHIPPING) {
+          setCheckoutStep(2);
+        } else if (normalized === ROUTE_HASH.CHECKOUT_PAYMENT) {
+          setCheckoutStep(3);
+        } else {
+          setCheckoutStep(1);
+        }
+        return;
+      }
+
+      if (normalized === ROUTE_HASH.ORDERS) {
+        setCheckoutOpen(false);
+        setCheckoutStep(1);
+        setActiveView("orders");
+        return;
+      }
+
+      setCheckoutOpen(false);
+      setCheckoutStep(1);
+      setActiveView("store");
+    }
+
+    applyRouteFromHash();
+    window.addEventListener("hashchange", applyRouteFromHash);
+    return () => window.removeEventListener("hashchange", applyRouteFromHash);
+  }, []);
+
+  useEffect(() => {
+    const normalized = normalizeHash(window.location.hash);
+    if (normalized !== currentRouteHash) {
+      window.location.hash = currentRouteHash;
+    }
+  }, [currentRouteHash]);
 
   useEffect(() => {
     if (!user) return;
