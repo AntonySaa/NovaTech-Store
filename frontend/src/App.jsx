@@ -231,9 +231,9 @@ const PRODUCT_IMAGE_LIBRARY = {
     "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=1400&auto=format&fit=crop",
   ],
   monitor: [
-    "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1527814050087-3793815479db?w=1400&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?w=1400&auto=format&fit=crop",
+    "/featured/featured-06.png",
+    "/featured/featured-06.png",
+    "/featured/featured-06.png",
   ],
   mouse: [
     "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=1400&auto=format&fit=crop",
