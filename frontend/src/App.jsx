@@ -400,9 +400,12 @@ function App() {
 
   const promoMessages = useMemo(() => {
     return [
-      "Cupon NOVA10 = 10% OFF",
-      "Cupon NOVA20 = 20% OFF",
-      "Cupon NOVA2026 = 40% OFF",
+      "Semana de descuentos por el Dia del Padre: hasta 40% OFF en seleccionados",
+      "Semana Gamer NovaTech: ofertas especiales en laptops, monitores y perifericos",
+      "Usa cupon NOVA10 y recibe 10% OFF",
+      "Usa cupon NOVA20 y recibe 20% OFF",
+      "Usa cupon NOVA2026 y recibe 40% OFF",
+      "Promociones activas por tiempo limitado en todo el catalogo tecnologico",
     ];
   }, []);
 
