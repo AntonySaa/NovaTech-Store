@@ -212,9 +212,6 @@ const emptyCheckoutForm = {
   phone: "",
 };
 const BASE_COUPONS = {
-  GLOBAL5: 5,
-  PROMO2026: 8,
-  MOBILE7: 7,
   NOVA10: 10,
   NOVA20: 20,
   NOVA2026: 40,
@@ -379,39 +376,12 @@ function App() {
   }, [products, searchTerm]);
 
   const promoMessages = useMemo(() => {
-    const fixedCouponPromos = [
-      "Cupon NOVA10: 10% OFF en productos seleccionados",
-      "Cupon NOVA20: 20% OFF en productos participantes",
-      "Cupon NOVA2026: 40% OFF en promociones especiales",
+    return [
+      "Cupon NOVA10 = 10% OFF",
+      "Cupon NOVA20 = 20% OFF",
+      "Cupon NOVA2026 = 40% OFF",
     ];
-
-    const dynamicPromos = products
-      .filter(
-        (product) =>
-          Number(product.discountPercent || 0) > 0 || Boolean(product.couponCode)
-      )
-      .map((product) => {
-        const discount = Number(product.discountPercent || 0);
-        const base =
-          discount > 0
-            ? `${product.name}: ${discount}% OFF`
-            : `${product.name}: promocion especial`;
-
-        return product.couponCode
-          ? `${base} con cupon ${product.couponCode}`
-          : base;
-      });
-
-    const fallbackPromos = [
-      "Cupon GLOBAL5 disponible en compras mayores a S/ 250",
-      "Envio gratis en Lima por compras desde S/ 199",
-      "Descuento gamer de fin de semana en productos seleccionados",
-    ];
-
-    return dynamicPromos.length > 0
-      ? [...fixedCouponPromos, ...dynamicPromos, ...fallbackPromos]
-      : [...fixedCouponPromos, ...fallbackPromos];
-  }, [products]);
+  }, []);
 
   const cartItemCount = useMemo(() => {
     return (cart.data || []).reduce((sum, item) => sum + item.quantity, 0);
@@ -419,22 +389,7 @@ function App() {
 
   const cartSubtotal = useMemo(() => Number(cart.total || 0), [cart.total]);
 
-  const availableCoupons = useMemo(() => {
-    const dynamic = (cart.data || []).reduce((acc, item) => {
-      const code = item.product?.couponCode;
-      if (!code) return acc;
-      const normalized = code.toUpperCase().trim();
-      const discount = Math.max(5, Number(item.product?.discountPercent || 0));
-      return {
-        ...acc,
-        [normalized]: discount,
-      };
-    }, {});
-    return {
-      ...BASE_COUPONS,
-      ...dynamic,
-    };
-  }, [cart.data]);
+  const availableCoupons = useMemo(() => BASE_COUPONS, []);
 
   const couponDiscount = useMemo(() => {
     if (!appliedCoupon) return 0;
