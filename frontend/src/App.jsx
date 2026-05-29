@@ -220,6 +220,113 @@ const BASE_COUPONS = {
   NOVA2026: 40,
 };
 
+const PRODUCT_IMAGE_LIBRARY = {
+  laptop: [
+    "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=1400&auto=format&fit=crop",
+  ],
+  monitor: [
+    "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1527814050087-3793815479db?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?w=1400&auto=format&fit=crop",
+  ],
+  mouse: [
+    "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1629429407756-01cd3d7cfb38?w=1400&auto=format&fit=crop",
+  ],
+  teclado: [
+    "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1630975797856-7f4dcf5b4d5f?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1400&auto=format&fit=crop",
+  ],
+  tablet: [
+    "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?w=1400&auto=format&fit=crop",
+  ],
+  celular: [
+    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1556656793-08538906a9f8?w=1400&auto=format&fit=crop",
+  ],
+  audio: [
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1589003077984-894e133dabab?w=1400&auto=format&fit=crop",
+  ],
+  webcam: [
+    "https://images.unsplash.com/photo-1623949556303-b0d17d198863?w=1400&auto=format&fit=crop",
+  ],
+  generic: [
+    "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1400&auto=format&fit=crop",
+  ],
+};
+
+function hashText(value) {
+  return String(value || "")
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+}
+
+function pickFromLibrary(bucket, identity) {
+  const images = PRODUCT_IMAGE_LIBRARY[bucket] || PRODUCT_IMAGE_LIBRARY.generic;
+  return images[hashText(identity) % images.length];
+}
+
+function resolveProductImage(product, sectionKey = "") {
+  const name = String(product?.name || "").toLowerCase();
+  const category = String(product?.category || "").toLowerCase();
+  const identity = product?.slug || product?.id || name;
+
+  if (name.includes("monitor") || sectionKey === "monitores") {
+    return pickFromLibrary("monitor", identity);
+  }
+  if (name.includes("mouse") || sectionKey === "mouse") {
+    return pickFromLibrary("mouse", identity);
+  }
+  if (name.includes("teclado") || name.includes("keyboard") || sectionKey === "teclado") {
+    return pickFromLibrary("teclado", identity);
+  }
+  if (name.includes("tablet") || name.includes("tab ") || sectionKey === "tablet") {
+    return pickFromLibrary("tablet", identity);
+  }
+  if (
+    name.includes("iphone") ||
+    name.includes("samsung galaxy") ||
+    name.includes("motorola") ||
+    name.includes("xiaomi") ||
+    name.includes("celular") ||
+    name.includes("smartphone") ||
+    sectionKey === "celulares"
+  ) {
+    return pickFromLibrary("celular", identity);
+  }
+  if (name.includes("audifono") || name.includes("parlante") || category.includes("audio")) {
+    return pickFromLibrary("audio", identity);
+  }
+  if (name.includes("webcam")) {
+    return pickFromLibrary("webcam", identity);
+  }
+  if (name.includes("laptop") || name.includes("notebook") || sectionKey === "laptop") {
+    return pickFromLibrary("laptop", identity);
+  }
+  if (category.includes("movil")) {
+    return pickFromLibrary("celular", identity);
+  }
+  if (category.includes("perifericos")) {
+    return pickFromLibrary("mouse", identity);
+  }
+  if (category.includes("gaming") || category.includes("computo")) {
+    return pickFromLibrary("laptop", identity);
+  }
+
+  return (
+    (product?.imageUrl && String(product.imageUrl).trim()) ||
+    pickFromLibrary("generic", identity)
+  );
+}
+
 function App() {
   const googleButtonRef = useRef(null);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
@@ -976,10 +1083,7 @@ function App() {
                 {(cart.data || []).map((item) => (
                   <article key={item.id} className="checkoutItem">
                     <img
-                      src={
-                        item.product.imageUrl ||
-                        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600"
-                      }
+                      src={resolveProductImage(item.product)}
                       alt={item.product.name}
                     />
                     <div className="checkoutItemInfo">
@@ -1356,10 +1460,7 @@ function App() {
                             <span className="discountCorner">-{discount}%</span>
                           )}
                           <img
-                            src={
-                              product.imageUrl ||
-                              "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200"
-                            }
+                            src={resolveProductImage(product, section.key)}
                             alt={product.name}
                           />
                           <h3 className="modelTitle">{product.name}</h3>
